@@ -11,10 +11,11 @@ public class Index {
 	
 	private String path;
 	private ArrayList<String> options;
+	private ArrayList<Token> tokens;
 	
 	public Index()
 	{
-		
+		tokens = new ArrayList<Token>();
 	}
 	
 	public void init(String path, ArrayList<String> options)
@@ -52,7 +53,10 @@ public class Index {
 			}
 		}
 		
+		System.out.println("aaaa: " + all_files.get(0).getName() );
+		
 		// wir holen aus der datei alle brauchbaren zeilen.
+		// hier wird zur zeit einfach die erste datei verwendet.
 		ArrayList<String> usefull_lines = get_usefull_lines(all_files.get(0));
 		
 		// die zeilen werden bei " " getrennt und die woerter in eine
@@ -62,14 +66,65 @@ public class Index {
 		// normalize words. die optionen aus dem cli werden hier verwendet.
 		ArrayList<String> all_words_normalized = normalize_words(all_words, options);
 		
+		//~ ArrayList<Token> at = new ArrayList<Token>();
 		
-		System.out.println("========================================");
+		
 		for (int i = 0; i < all_words_normalized.size(); ++i)
 		{
-			System.out.println(all_words_normalized.get(i));
+			// 1. es wird ein token angelegt
+			// 2. es wird ueberprueft ob der token in den tokens enthalten ist.
+			// dabei wird token.term verglichen.
+			// 3. wenn der token noch nicht vorhanden ist, wird er neu hinzugefuegt
+			// 4. auf jeden fall wird die id der datei zu der posting list hinzugefuegt
+			// ob die id schon in der posting list ist wird in der add_id funktion
+			// ueberprueft
+			
+			Token temp = new Token(all_words_normalized.get(i));
+			
+			if (tokens.contains(temp) == false)
+			{
+				tokens.add(temp);
+			}
+			else
+			{
+				System.out.println("asdf");
+			}
+			
+			
+			//~ tokens.add(new Token(all_words_normalized.get(i)));
 		}
 		
 		System.out.println("========================================");
+		int i;
+		for (i = 0; i < tokens.size(); ++i)
+		{
+			tokens.get(i).print();
+		}
+		System.out.println(i);
+		
+		System.out.println("========================================");
+		//~ 
+		//~ tokens.get(0).print();
+		//~ 
+		//~ if (tokens.get(0).has_id(10) == false)
+		//~ {
+			//~ tokens.get(0).add_id(10);
+			//~ tokens.get(0).add_id(10);
+			//~ tokens.get(0).add_id(10);
+		//~ }
+		//~ 
+		//~ tokens.get(0).print();
+		//~ 
+		//~ Token t1 = new Token("auhto");
+		//~ Token t2 = new Token("auto");
+		//~ 
+		//~ t2.add_id(12);
+		//~ 
+		//~ tokens.add(t1);
+		//~ 
+		
+		//~ System.out.println(t1.equals(t2));
+		//~ System.out.println(t2.equals(t1));
 	}
 	
 	// es wird alles aufgenommen ausser: header und leere zeilen
@@ -210,7 +265,6 @@ public class Index {
 		}
 		
 		return normalized_words;
-		
 	}
 	
 }

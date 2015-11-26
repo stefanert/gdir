@@ -62,20 +62,6 @@ public class Gdir {
 		
 		Index index = new Index();
 		index.init(path_rel, options);
-		
-		//~ 
-		//~ File directory_base = new File(path_rel);
-		//~ 
-        //~ //ArrayList<File> subdirectories = new ArrayList<File>();
-        //~ File[] subdirectories = directory_base.listFiles();
-        //~ 
-        //~ for (i=0; i < subdirectories.length ; ++i)
-		//~ {
-			//~ System.out.println(subdirectories[i]);
-		//~ }
-		
-		
-		
 	}
 	
 }
