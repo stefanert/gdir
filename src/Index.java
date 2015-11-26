@@ -54,17 +54,19 @@ public class Index {
 		
 		System.out.println("========================================");
 		
-		ArrayList<String> usefull_lines = get_usefull_lines(all_files.get(4));
+		ArrayList<String> usefull_lines = get_usefull_lines(all_files.get(0));
 		
 		for (int i = 0; i < usefull_lines.size(); ++i)
 		{
 			System.out.println(usefull_lines.get(i));
 		}
 		
-		
 		System.out.println("========================================");
-		
 	}
+	
+	// es wird alles aufgenommen ausser: header und leere zeilen
+	// TODO: ueberlegen, ob hier alle zeielen geloescht werden ,die mit
+	// ">" beginnen. also wo noch der text steht auf den geantwortet wird.
 	
 	public ArrayList<String> get_usefull_lines(File file)
 	{
@@ -106,22 +108,54 @@ public class Index {
 					// leere zeielen werden uebersprungen
 					if (line.equals("") == false)
 					{
-						usefull_lines.add(line);
+						usefull_lines.add(remove_garbage(line));
 					}
 				}
-				
 			}
-			
-			
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		
-		
-		
 		return usefull_lines;
+	}
+	
+	// zeichen aus der zeile loeschen, die nicht beachtet werden.
+	
+	public String remove_garbage(String line)
+	{
+		String[] garbage = {
+			".",
+			",",
+			"?",
+			"!",
+			":",
+			"-",
+			"/",
+			"\\",
+			"'",
+			"\"",
+			"(",
+			")",
+			"[",
+			"]",
+			"{",
+			"}",
+			"~",
+			"_",
+			"*",
+			"+",
+			"<",
+			">" // das wird auch fuer die zeilen verwendet auf die geantwortet wird
+		};
+		
+		for (int i = 0; i < garbage.length; ++i)
+		{
+			line = line.replace(garbage[i], "");
+		}
+		
+		return line;
 	}
 	
 }
