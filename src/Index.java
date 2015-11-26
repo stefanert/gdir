@@ -24,15 +24,6 @@ public class Index {
 		this.path = path;
 		this.options = options;
 		
-		System.out.println("INIT");
-		
-		System.out.println("path: " + this.path);
-		System.out.println("options: ");
-		for (int i = 0; i < this.options.size(); ++i)
-		{
-			System.out.println(this.options.get(i));
-		}
-		
 		// ordner und unterordner holen
 		File directory_base = new File(this.path);
         File[] subdirectories = directory_base.listFiles();
@@ -53,7 +44,7 @@ public class Index {
 			}
 		}
 		
-		System.out.println("aaaa: " + all_files.get(0).getName() );
+		System.out.println("file name: " + all_files.get(0).getName() );
 		
 		// wir holen aus der datei alle brauchbaren zeilen.
 		// hier wird zur zeit einfach die erste datei verwendet.
@@ -78,6 +69,9 @@ public class Index {
 			// 4. auf jeden fall wird die id der datei zu der posting list hinzugefuegt
 			// ob die id schon in der posting list ist wird in der add_id funktion
 			// ueberprueft
+			
+			// TODO
+			// funz nicht :-(
 			
 			Token temp = new Token(all_words_normalized.get(i));
 			
