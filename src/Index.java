@@ -250,18 +250,25 @@ public class Index {
 	public ArrayList<String> normalize_words(ArrayList<String> words, ArrayList<String> options)
 	{
 		ArrayList<String> normalized_words = new ArrayList<String>();
+		Stemmer st = new Stemmer();
 		
-		if (options.contains("cf")) // case folding
+		for (int i = 0; i < words.size(); ++i)
 		{
-			for (int i = 0; i < words.size(); ++i)
-			{
-				normalized_words.add(words.get(i).toLowerCase());
-			}
-		}
-		
-		if (options.contains("st")) // stemming
-		{
+			String normalized_word = words.get(i);
 			
+			if (options.contains("cf")) // case folding
+			{
+				normalized_word = normalized_word.toLowerCase();
+			}
+			
+			if (options.contains("st")) // stemming
+			{
+				st.add(normalized_word.toCharArray(), normalized_word.length());
+				st.stem();
+				normalized_word = st.toString();
+			}
+			
+			normalized_words.add(normalized_word);
 		}
 		
 		return normalized_words;
