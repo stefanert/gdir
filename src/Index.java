@@ -52,13 +52,21 @@ public class Index {
 			}
 		}
 		
-		System.out.println("========================================");
-		
+		// wir holen aus der datei alle brauchbaren zeilen.
 		ArrayList<String> usefull_lines = get_usefull_lines(all_files.get(0));
 		
-		for (int i = 0; i < usefull_lines.size(); ++i)
+		// die zeilen werden bei " " getrennt und die woerter in eine
+		// arraylist gesteckt. das ergebnis sind alle woerter der datei.
+		ArrayList<String> all_words = get_all_words(usefull_lines);
+		
+		// normalize words. die optionen aus dem cli werden hier verwendet.
+		ArrayList<String> all_words_normalized = normalize_words(all_words, options);
+		
+		
+		System.out.println("========================================");
+		for (int i = 0; i < all_words_normalized.size(); ++i)
 		{
-			System.out.println(usefull_lines.get(i));
+			System.out.println(all_words_normalized.get(i));
 		}
 		
 		System.out.println("========================================");
@@ -122,6 +130,8 @@ public class Index {
 	}
 	
 	// zeichen aus der zeile loeschen, die nicht beachtet werden.
+	// das wird in der funktion get_usefull_lines aufgerufen,
+	// wenn eine zeile zu den brauchbaren hinzugefuegt wird.
 	
 	public String remove_garbage(String line)
 	{
@@ -156,6 +166,51 @@ public class Index {
 		}
 		
 		return line;
+	}
+	
+	// aus den zeilen einer datei werden die einzelnen woerter geholt
+	
+	public ArrayList<String> get_all_words(ArrayList<String> lines)
+	{
+		ArrayList<String> all_words = new ArrayList<String>();
+		String[] line_words;
+		
+		for (int i = 0; i < lines.size(); ++i)
+		{
+			line_words = lines.get(i).split(" ");
+			
+			for (int j = 0; j < line_words.length; ++j)
+			{
+				// leere woerter werden nicht aufgenommen
+				if (line_words[j].equals("") == false)
+				{
+					all_words.add(line_words[j]);
+				}
+			}
+		}
+		
+		return all_words;
+	}
+	
+	public ArrayList<String> normalize_words(ArrayList<String> words, ArrayList<String> options)
+	{
+		ArrayList<String> normalized_words = new ArrayList<String>();
+		
+		if (options.contains("cf")) // case folding
+		{
+			for (int i = 0; i < words.size(); ++i)
+			{
+				normalized_words.add(words.get(i).toLowerCase());
+			}
+		}
+		
+		if (options.contains("st")) // stemming
+		{
+			
+		}
+		
+		return normalized_words;
+		
 	}
 	
 }
