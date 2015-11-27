@@ -12,8 +12,6 @@ public class Gdir {
 		int i = 0;
 		String current_arg = "";
 		
-		System.out.println("Hello, gdir");
-		
 		// args verarbeiten
 		
 		// hier werden die optionen wie case folding usw. gespeichert
@@ -21,34 +19,18 @@ public class Gdir {
 		
 		if (args.length > 0)
 		{
-			//~ System.out.println("args:");
 			for(i = 0; i <= args.length - 1; i++)
 			{
 				current_arg = args[i];
-				
-				// wenn das aktuelle arg nicht mit einem "-" beginnt wird es uebersprungen
-				// wenn "-query test"
-				//~ if (false == current_arg.startsWith("-"))
-				//~ {
-					//~ System.out.print("contu");
-					//~ continue;
-				//~ }
-				
 				current_arg = current_arg.substring(1);
-				
-				System.out.println(current_arg);
-				
-				// zur zeit ist bow default. muss also nich angegeben werden
 				
 				// cf = case folding
 				// st = stemming
-				// bow = bag of words
 				// bw = bi word
 				if
 				(
 					(current_arg.equals("cf")) ||
 					(current_arg.equals("st")) ||
-					(current_arg.equals("bow")) ||
 					(current_arg.equals("bw")) 
 				)
 				{
@@ -56,7 +38,11 @@ public class Gdir {
 				}
 				else
 				{
-					System.out.println("unbekanntes arg: " + current_arg);
+					System.out.println("usage: Gdir <path> <options>");
+					System.out.println("options:");
+					System.out.println("\tcf: use case folding");
+					System.out.println("\tst: use stemming");
+					System.out.println("\tbw: use bi-words instead of bag of words");
 					return;
 				}
 			}
@@ -80,7 +66,13 @@ public class Gdir {
 		System.out.println("+--------------------------------------------------");
 		
 		String input = "";
-		
+		// wenn das aktuelle arg nicht mit einem "-" beginnt wird es uebersprungen
+				// wenn "-query test"
+				//~ if (false == current_arg.startsWith("-"))
+				//~ {
+					//~ System.out.print("contu");
+					//~ continue;
+				//~ }
 		while(true)
 		{
 			System.out.print("> ");
