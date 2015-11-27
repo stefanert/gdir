@@ -1,10 +1,13 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Gdir {
 	
 	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
 		
 		int i = 0;
 		String current_arg = "";
@@ -68,5 +71,27 @@ public class Gdir {
 		
 		Index index = new Index(path_rel, options);
 		index.init();
+		
+		System.out.println("+--------------------------------------------------");
+		System.out.println("| Index has been created with the options: " + options);
+		System.out.println("| Search for query: -q [query]");
+		System.out.println("| Search for topic: -t [topic]");
+		System.out.println("| Enter \"exit\" to quit");
+		System.out.println("+--------------------------------------------------");
+		
+		String input = "";
+		
+		while(true)
+		{
+			System.out.print("> ");
+            input = sc.nextLine();
+            
+            if (input.equals("exit"))
+            {
+				break;
+			}
+            
+            System.out.println("Command: " + input);
+        }
 	}
 }

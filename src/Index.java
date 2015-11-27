@@ -45,7 +45,7 @@ public class Index {
 		}
 		
 		//~ for (int i = 0; i < all_files.size(); ++i)
-		for (int i = 0; i < 200; ++i)
+		for (int i = 0; i < 20; ++i)
 		{
 			index_file(all_files.get(i));
 		}
