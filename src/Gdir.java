@@ -66,8 +66,7 @@ public class Gdir {
 		
 		String path_rel = "../resources/20_newsgroups_subset/";
 		
-		Index index = new Index();
-		index.init(path_rel, options);
+		Index index = new Index(path_rel, options);
+		index.init();
 	}
-	
 }

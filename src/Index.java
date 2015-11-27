@@ -14,17 +14,16 @@ public class Index {
 	private ArrayList<String> options;
 	private HashMap<String, Token> tokens;
 	
-	public Index()
+	public Index(String path, ArrayList<String> options)
 	{
 		tokens = new HashMap<String, Token>();
-	}
-	
-	public void init(String path, ArrayList<String> options)
-	{
-		// das mit dem pfad und den optionen vielleicht in public Index()
+		
 		this.path = path;
 		this.options = options;
-		
+	}
+	
+	public void init()
+	{
 		// ordner und unterordner holen
 		File directory_base = new File(this.path);
         File[] subdirectories = directory_base.listFiles();
@@ -33,7 +32,7 @@ public class Index {
         ArrayList<File> all_files = new ArrayList<File>();
         
         File[] current_dir_files;
-        for (int i=0; i < subdirectories.length ; ++i)
+        for (int i = 0; i < subdirectories.length; ++i)
 		{
 			// datein des aktuellen ordners
 			current_dir_files = subdirectories[i].listFiles();
@@ -45,16 +44,11 @@ public class Index {
 			}
 		}
 		
-		for (int i = 0; i < 50; ++i)
+		//~ for (int i = 0; i < all_files.size(); ++i)
+		for (int i = 0; i < 200; ++i)
 		{
 			index_file(all_files.get(i));
 		}
-		
-		//~ Token t1 = new Token("auto");
-		//~ Token t2 = new Token("a");
-		//~ tokens.put("auto", t1);
-		//~ tokens.put("a", t2);
-		//~ 
 		
 		System.out.println("========================================");
 		
@@ -77,19 +71,14 @@ public class Index {
 		
 		System.out.println("file name: " + file.getName() );
 		
-		ArrayList<String> usefull_lines = get_usefull_lines(file);             // wir holen aus der datei alle brauchbaren zeilen.
-		ArrayList<String> all_words     = get_all_words(usefull_lines);        // die zeilen werden bei " " getrennt um die woerter zu bekommen
-		ArrayList<String> all_words_n   = normalize_words(all_words, options); // normalize words. die optionen aus dem cli werden hier verwendet.
-		
-		//~ ArrayList<Token> at = new ArrayList<Token>();
+		ArrayList<String> usefull_lines = get_usefull_lines(file);      // wir holen aus der datei alle brauchbaren zeilen.
+		ArrayList<String> all_words     = get_all_words(usefull_lines); // die zeilen werden bei " " getrennt um die woerter zu bekommen
+		ArrayList<String> all_words_n   = normalize_words(all_words);   // normalize words. die optionen aus dem cli werden hier verwendet.
 		
 		// wenn es bi word ist, dann wird das letzte wort nicht mehr eingelesen
 		// (das letzte wort ist das zweite beim vorletzten)
 		int bi_word_mod = 0;
-		if (options.contains("bw") == true)
-		{
-			bi_word_mod = 1;
-		}
+		if (this.options.contains("bw")) { bi_word_mod = 1; }
 		
 		String current_term = "";
 		
@@ -105,14 +94,12 @@ public class Index {
 			
 			current_term = all_words_n.get(i);
 			
-			if (options.contains("bw") == true)
-			{
-				current_term += "," + all_words_n.get(i+1); // das naechste wort wird auch genommen
-			}
+			// das naechste wort wird auch genommen
+			if (this.options.contains("bw")) { current_term += "," + all_words_n.get(i+1); }
 			
 			Token temp = new Token(current_term);
 			
-			if (tokens.containsKey(current_term) == false)
+			if ( ! tokens.containsKey(current_term))
 			{
 				temp.add_id(doc_id);
 				tokens.put(current_term, temp);
@@ -193,6 +180,7 @@ public class Index {
 			"?",
 			"!",
 			":",
+			";",
 			"-",
 			"/",
 			"\\",
@@ -207,7 +195,14 @@ public class Index {
 			"~",
 			"_",
 			"*",
+			"#",
+			"`",
+			"´",
+			"^",
+			"|",
 			"+",
+			"=",
+			"$",
 			"&",
 			"%",
 			"§",
@@ -247,7 +242,7 @@ public class Index {
 		return all_words;
 	}
 	
-	public ArrayList<String> normalize_words(ArrayList<String> words, ArrayList<String> options)
+	public ArrayList<String> normalize_words(ArrayList<String> words)
 	{
 		ArrayList<String> normalized_words = new ArrayList<String>();
 		Stemmer st = new Stemmer();
@@ -256,12 +251,12 @@ public class Index {
 		{
 			String normalized_word = words.get(i);
 			
-			if (options.contains("cf")) // case folding
+			if (this.options.contains("cf")) // case folding
 			{
 				normalized_word = normalized_word.toLowerCase();
 			}
 			
-			if (options.contains("st")) // stemming
+			if (this.options.contains("st")) // stemming
 			{
 				st.add(normalized_word.toCharArray(), normalized_word.length());
 				st.stem();

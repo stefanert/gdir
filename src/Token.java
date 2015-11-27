@@ -43,8 +43,6 @@ public class Token {
 	{
 		Token obj_token = (Token) obj;
 		
-		//~ System.out.println(this.term + " = " + obj_token.get_term());
-		
 		if (this.term.equals(obj_token.get_term()))
 		{
 			return true;
