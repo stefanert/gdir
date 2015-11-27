@@ -80,7 +80,22 @@ public class Gdir {
 				break;
 			}
             
-            System.out.println("Command: " + input);
+			String[] input_array = input.split(" ", 2);
+            
+            if (input_array[0].substring(1).equals("q"))
+            {
+				System.out.println(index.search_query(input_array[1]));
+			}
+			else if (input_array[0].substring(1).equals("t"))
+			{
+				System.out.println("Topic");
+			}
+			else
+			{
+				
+			}
+            
+            
         }
 	}
 }

@@ -27,6 +27,11 @@ public class Token {
 		}
 	}
 	
+	public ArrayList<Integer> get_posting_list()
+	{
+		return this.posting_list;
+	}
+	
 	public String get_term()
 	{
 		return this.term;

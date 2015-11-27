@@ -50,18 +50,18 @@ public class Index {
 			index_file(all_files.get(i));
 		}
 		
-		System.out.println("========================================");
-		
-		int i = 0;
-		for (Token value : tokens.values())
-		{
-			i++;
-			value.print();
-		}
-		
-		System.out.println(i);
-		
-		System.out.println("========================================");
+		//~ System.out.println("========================================");
+		//~ 
+		//~ int i = 0;
+		//~ for (Token value : tokens.values())
+		//~ {
+			//~ i++;
+			//~ value.print();
+		//~ }
+		//~ 
+		//~ System.out.println(i);
+		//~ 
+		//~ System.out.println("========================================");
 	}
 	
 	
@@ -69,7 +69,7 @@ public class Index {
 	{
 		int doc_id = Integer.parseInt(file.getName());
 		
-		System.out.println("file name: " + file.getName() );
+		//~ System.out.println("file name: " + file.getName() );
 		
 		ArrayList<String> usefull_lines = get_usefull_lines(file);      // wir holen aus der datei alle brauchbaren zeilen.
 		ArrayList<String> all_words     = get_all_words(usefull_lines); // die zeilen werden bei " " getrennt um die woerter zu bekommen
@@ -267,6 +267,27 @@ public class Index {
 		}
 		
 		return normalized_words;
+	}
+	
+	public String search_query(String query)
+	{
+		String result = "";
+		
+		Token t = tokens.get(query);
+		
+		if (t == null)
+		{
+			result = "asf";
+		}
+		
+		//~ System.out.println(doc_ids);
+		//~ 
+		//~ for (int i = 0; i < doc_ids.size(); ++i)
+		//~ {
+			//~ result += doc_ids.get-(i) + ", ";
+		//~ }
+		
+		return result;
 	}
 	
 }
