@@ -54,4 +54,10 @@ public class Token {
 			return false;
 		}
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return term.hashCode();
+	}
 }

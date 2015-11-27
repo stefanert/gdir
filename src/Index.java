@@ -85,6 +85,8 @@ public class Index {
 	
 	public void index_file(File file)
 	{
+		int doc_id = Integer.parseInt(file.getName());
+		
 		System.out.println("file name: " + file.getName() );
 		
 		ArrayList<String> usefull_lines = get_usefull_lines(file);             // wir holen aus der datei alle brauchbaren zeilen.
@@ -124,6 +126,7 @@ public class Index {
 			
 			if (tokens.contains(temp) == false)
 			{
+				temp.add_id(doc_id);
 				tokens.add(temp);
 			}
 			else
