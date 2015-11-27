@@ -20,7 +20,7 @@ public class Index {
 	
 	public void init(String path, ArrayList<String> options)
 	{
-		// das mit dem pfad und den optionen vielleicht in public Indesx()
+		// das mit dem pfad und den optionen vielleicht in public Index()
 		this.path = path;
 		this.options = options;
 		
@@ -44,48 +44,9 @@ public class Index {
 			}
 		}
 		
-		System.out.println("file name: " + all_files.get(0).getName() );
-		
-		// wir holen aus der datei alle brauchbaren zeilen.
-		// hier wird zur zeit einfach die erste datei verwendet.
-		ArrayList<String> usefull_lines = get_usefull_lines(all_files.get(0));
-		
-		// die zeilen werden bei " " getrennt und die woerter in eine
-		// arraylist gesteckt. das ergebnis sind alle woerter der datei.
-		ArrayList<String> all_words = get_all_words(usefull_lines);
-		
-		// normalize words. die optionen aus dem cli werden hier verwendet.
-		ArrayList<String> all_words_normalized = normalize_words(all_words, options);
-		
-		//~ ArrayList<Token> at = new ArrayList<Token>();
-		
-		
-		for (int i = 0; i < all_words_normalized.size(); ++i)
+		for (int i = 0; i < 1; ++i)
 		{
-			// 1. es wird ein token angelegt
-			// 2. es wird ueberprueft ob der token in den tokens enthalten ist.
-			// dabei wird token.term verglichen.
-			// 3. wenn der token noch nicht vorhanden ist, wird er neu hinzugefuegt
-			// 4. auf jeden fall wird die id der datei zu der posting list hinzugefuegt
-			// ob die id schon in der posting list ist wird in der add_id funktion
-			// ueberprueft
-			
-			// TODO
-			// funz nicht :-(
-			
-			Token temp = new Token(all_words_normalized.get(i));
-			
-			if (tokens.contains(temp) == false)
-			{
-				tokens.add(temp);
-			}
-			else
-			{
-				System.out.println("asdf");
-			}
-			
-			
-			//~ tokens.add(new Token(all_words_normalized.get(i)));
+			index_file(all_files.get(i));
 		}
 		
 		System.out.println("========================================");
@@ -119,6 +80,60 @@ public class Index {
 		
 		//~ System.out.println(t1.equals(t2));
 		//~ System.out.println(t2.equals(t1));
+	}
+	
+	
+	public void index_file(File file)
+	{
+		System.out.println("file name: " + file.getName() );
+		
+		ArrayList<String> usefull_lines = get_usefull_lines(file);             // wir holen aus der datei alle brauchbaren zeilen.
+		ArrayList<String> all_words     = get_all_words(usefull_lines);        // die zeilen werden bei " " getrennt um die woerter zu bekommen
+		ArrayList<String> all_words_n   = normalize_words(all_words, options); // normalize words. die optionen aus dem cli werden hier verwendet.
+		
+		//~ ArrayList<Token> at = new ArrayList<Token>();
+		
+		// wenn es bi word ist, dann wird das letzte wort nicht mehr eingelesen
+		// (das letzte wort ist das zweite beim vorletzten)
+		int bi_word_mod = 0;
+		if (options.contains("bw") == true)
+		{
+			bi_word_mod = 1;
+		}
+		
+		String current_term = "";
+		
+		for (int i = 0; i < all_words_n.size()-bi_word_mod; ++i)
+		{
+			// 1. es wird ein token angelegt
+			// 2. es wird ueberprueft ob der token in den tokens enthalten ist.
+			// dabei wird token.term verglichen.
+			// 3. wenn der token noch nicht vorhanden ist, wird er neu hinzugefuegt
+			// 4. auf jeden fall wird die id der datei zu der posting list hinzugefuegt
+			// ob die id schon in der posting list ist wird in der add_id funktion
+			// ueberprueft
+			
+			current_term = all_words_n.get(i);
+			
+			if (options.contains("bw") == true)
+			{
+				current_term += "," + all_words_n.get(i+1); // das naechste wort wird auch genommen
+			}
+			
+			Token temp = new Token(current_term);
+			
+			if (tokens.contains(temp) == false)
+			{
+				tokens.add(temp);
+			}
+			else
+			{
+				System.out.println("asdf");
+			}
+			
+			
+			//~ tokens.add(new Token(all_words_n.get(i)));
+		}
 	}
 	
 	// es wird alles aufgenommen ausser: header und leere zeilen
@@ -205,6 +220,9 @@ public class Index {
 			"_",
 			"*",
 			"+",
+			"&",
+			"%",
+			"§",
 			"<",
 			">" // das wird auch fuer die zeilen verwendet auf die geantwortet wird
 		};

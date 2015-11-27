@@ -35,12 +35,18 @@ public class Gdir {
 				
 				System.out.println(current_arg);
 				
+				// zur zeit ist bow default. muss also nich angegeben werden
+				
 				// cf = case folding
 				// st = stemming
+				// bow = bag of words
+				// bw = bi word
 				if
 				(
 					(current_arg.equals("cf")) ||
-					(current_arg.equals("st"))
+					(current_arg.equals("st")) ||
+					(current_arg.equals("bow")) ||
+					(current_arg.equals("bw")) 
 				)
 				{
 					options.add(current_arg);
