@@ -38,11 +38,14 @@ public class Gdir {
 				}
 				else
 				{
-					System.out.println("usage: Gdir <path> <options>");
-					System.out.println("options:");
+					System.out.println("");
+					System.out.println("usage: Gdir [-p path] [-cf] [-st] [-bw]");
+					System.out.println("");
+					System.out.println("\tp: path to data [TODO]");
 					System.out.println("\tcf: use case folding");
 					System.out.println("\tst: use stemming");
 					System.out.println("\tbw: use bi-words instead of bag of words");
+					System.out.println("");
 					return;
 				}
 			}
@@ -66,13 +69,7 @@ public class Gdir {
 		System.out.println("+--------------------------------------------------");
 		
 		String input = "";
-		// wenn das aktuelle arg nicht mit einem "-" beginnt wird es uebersprungen
-				// wenn "-query test"
-				//~ if (false == current_arg.startsWith("-"))
-				//~ {
-					//~ System.out.print("contu");
-					//~ continue;
-				//~ }
+		
 		while(true)
 		{
 			System.out.print("> ");
