@@ -6,16 +6,17 @@ import java.io.InputStreamReader;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Index {
 	
 	private String path;
 	private ArrayList<String> options;
-	private ArrayList<Token> tokens;
+	private HashMap<String, Token> tokens;
 	
 	public Index()
 	{
-		tokens = new ArrayList<Token>();
+		tokens = new HashMap<String, Token>();
 	}
 	
 	public void init(String path, ArrayList<String> options)
@@ -44,42 +45,29 @@ public class Index {
 			}
 		}
 		
-		for (int i = 0; i < 1; ++i)
+		for (int i = 0; i < 50; ++i)
 		{
 			index_file(all_files.get(i));
 		}
 		
+		//~ Token t1 = new Token("auto");
+		//~ Token t2 = new Token("a");
+		//~ tokens.put("auto", t1);
+		//~ tokens.put("a", t2);
+		//~ 
+		
 		System.out.println("========================================");
-		int i;
-		for (i = 0; i < tokens.size(); ++i)
+		
+		int i = 0;
+		for (Token value : tokens.values())
 		{
-			tokens.get(i).print();
+			i++;
+			value.print();
 		}
+		
 		System.out.println(i);
 		
 		System.out.println("========================================");
-		//~ 
-		//~ tokens.get(0).print();
-		//~ 
-		//~ if (tokens.get(0).has_id(10) == false)
-		//~ {
-			//~ tokens.get(0).add_id(10);
-			//~ tokens.get(0).add_id(10);
-			//~ tokens.get(0).add_id(10);
-		//~ }
-		//~ 
-		//~ tokens.get(0).print();
-		//~ 
-		//~ Token t1 = new Token("auhto");
-		//~ Token t2 = new Token("auto");
-		//~ 
-		//~ t2.add_id(12);
-		//~ 
-		//~ tokens.add(t1);
-		//~ 
-		
-		//~ System.out.println(t1.equals(t2));
-		//~ System.out.println(t2.equals(t1));
 	}
 	
 	
@@ -124,18 +112,15 @@ public class Index {
 			
 			Token temp = new Token(current_term);
 			
-			if (tokens.contains(temp) == false)
+			if (tokens.containsKey(current_term) == false)
 			{
 				temp.add_id(doc_id);
-				tokens.add(temp);
+				tokens.put(current_term, temp);
 			}
 			else
 			{
-				System.out.println("asdf");
+				tokens.get(current_term).add_id(doc_id);
 			}
-			
-			
-			//~ tokens.add(new Token(all_words_n.get(i)));
 		}
 	}
 	
@@ -254,7 +239,7 @@ public class Index {
 				// leere woerter werden nicht aufgenommen
 				if (line_words[j].equals("") == false)
 				{
-					all_words.add(line_words[j]);
+					all_words.add(line_words[j].trim());
 				}
 			}
 		}
