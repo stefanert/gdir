@@ -55,7 +55,7 @@ public class Dictionary {
         else if(!query[0].equals("-f")){
             if(query[0].equals("-q")){
 
-                //Anwenden der ausgewählten Optionen auf die Query
+                //Anwenden der ausgewaehlten Optionen auf die Query
                 ArrayList<String> queryList = new ArrayList<String>(Arrays.asList(query));
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	queryList = options.normalize(queryList);
                 query = queryList.toArray(new String[queryList.size()]);
@@ -68,7 +68,7 @@ public class Dictionary {
                 File topic = new File(path);
                 Index methods = new Index();
 
-                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
+                //Anwenden der ausgewaehlten Optionen auf den Topic Inhalt
                 ArrayList<String> useful_lines = methods.get_usefull_lines(topic);
                 ArrayList<String> all_words     = methods.get_all_words(useful_lines);
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	all_words = options.normalize(all_words);
@@ -78,7 +78,7 @@ public class Dictionary {
             }
         } else if(query[0].equals("-f")){
             if(query[2].equals("-q")){
-                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
+                //Anwenden der ausgewaehlten Optionen auf den Topic Inhalt
                 ArrayList<String> queryList = new ArrayList<String>(Arrays.asList(query));
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	queryList = options.normalize(queryList);
                 query = queryList.toArray(new String[queryList.size()]);
@@ -90,7 +90,7 @@ public class Dictionary {
                 File topic = new File(path);
                 Index methods = new Index();
 
-                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
+                //Anwenden der ausgewaehlten Optionen auf den Topic Inhalt
                 ArrayList<String> useful_lines = methods.get_usefull_lines(topic);
                 ArrayList<String> all_words     = methods.get_all_words(useful_lines);
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	all_words = options.normalize(all_words);
@@ -116,10 +116,10 @@ public class Dictionary {
         HashMap<String, Double> ranking = new HashMap<String, Double>();
         HashSet<String> relevantDocuments = new HashSet<String>();
 
-        //für jeders Wort in der Query
+        //fuer jeders Wort in der Query
         for(int i = 1; i < query.length; ++i){
-            //Die Dokumente der Posting List jedes Wortes das im Dictionary existiert werden dem "relevant Documents" Hashset hinzugefügt, damit nicht in jedem Dokument gesucht werden muss
-            //Für jedes weitere Wort werden dessen Dokumente hinzugefügt
+            //Die Dokumente der Posting List jedes Wortes das im Dictionary existiert werden dem "relevant Documents" Hashset hinzugefuegt, damit nicht in jedem Dokument gesucht werden muss
+            //Fuer jedes weitere Wort werden dessen Dokumente hinzugefuegt
             //Hashset eliminiert Duplikate von alleine
             for (Map.Entry<String, Token> entry : dictionary.entrySet()) {
                 if(entry.getKey().equals(query[i])){
@@ -129,11 +129,11 @@ public class Dictionary {
                     //}
 
                     //Diese Methode macht das gleiche wie oben beschrieben bzw. ist einfach nur eine moderne Vereinfachung der for-Schleife
-                    //Wenn du sie eventuelle nicht ausführen kannst (Java 7 oder höher is glaub ich gefordert, dann kommentiers aus und verwende die for-schleife
+                    //Wenn du sie eventuelle nicht ausfuehren kannst (Java 7 oder hoeher is glaub ich gefordert, dann kommentiers aus und verwende die for-schleife
                     //Machen das gleiche
                     relevantDocuments.addAll(entry.getValue().get_posting_list().entrySet().stream().map(Map.Entry<String, Integer>::getKey).collect(Collectors.toList()));
 
-                    //Hier findet eben für jedes relevante Dokument jetzt die Berechnung statt
+                    //Hier findet eben fuer jedes relevante Dokument jetzt die Berechnung statt
                     for(String document : relevantDocuments){
                         double score;
                         //ich frage ob das wort auch wirklich in diesem dokument vorkommt, wenn ja berechne ich den Score wie in den Folien beschrieben
@@ -221,7 +221,7 @@ public class Dictionary {
     }
 
 
-    //innere Klasse, die notwendig ist für die TOP 20 Berechnung
+    //innere Klasse, die notwendig ist fuer die TOP 20 Berechnung
     class ValueComparator implements Comparator<String> {
 
         Map<String, Double> base;

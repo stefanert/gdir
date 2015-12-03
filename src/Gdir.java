@@ -32,14 +32,14 @@ public class Gdir {
 				"> ");
 
 
-		//Hier drinnen werden die Optionen -cf -bw etc. geprüft und gespeichert
+		//Hier drinnen werden die Optionen -cf -bw etc. geprueft und gespeichert
 		Options persOpt = new Options();
 		persOpt.checkArguments();
 
 		System.out.println("Thank you! Now I'm going to create a dictionary out of the resources your provided!\n" +
 				"This might take a while. But worry not! I'm fast ...");
 
-		//Hier wird der Index für die Token erstellt
+		//Hier wird der Index fuer die Token erstellt
 		index.setOptions(persOpt);
 		index.init();
 

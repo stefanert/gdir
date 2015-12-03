@@ -21,7 +21,7 @@ public class Token {
 	*/
 	
 	public void addToPostinglist(String id){
-		// die id wird hinzugefuegt, wenn sie noch nicht enthalten ist, ansonsten die häufigkeit erhöht
+		// die id wird hinzugefuegt, wenn sie noch nicht enthalten ist, ansonsten die haeufigkeit erhoeht
 		if (!this.posting_list.containsKey(id)){
 			this.posting_list.put(id, 1);
 		} else {

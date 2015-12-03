@@ -135,14 +135,6 @@ public class Index {
 
 		for (int i = 0; i < all_words.size()-bi_word_mod; ++i)
 		{
-			// 1. es wird ein token angelegt
-			// 2. es wird ueberprueft ob der token in den tokens enthalten ist.
-			// dabei wird token.term verglichen.
-			// 3. wenn der token noch nicht vorhanden ist, wird er neu hinzugefuegt
-			// 4. auf jeden fall wird die id der datei zu der posting list hinzugefuegt
-			// ob die id schon in der posting list ist wird in der add_id funktion
-			// ueberprueft
-			
 			current_term = all_words.get(i);
 			
 			// das naechste wort wird auch genommen
