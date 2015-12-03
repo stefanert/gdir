@@ -63,8 +63,12 @@ public class Gdir {
 			String[] sQueryOpt = searchOpt.checkMode();
 
 			String results = index.getDictionary().search(sQueryOpt, persOpt);
+			if (results.equals("exit")){
+				System.out.println("Bye bye!");
+				break;
+			}
 
-			System.out.println(results + "\n\n\n\n >");
+			System.out.print(results + "\n> ");
 		}
 
 
