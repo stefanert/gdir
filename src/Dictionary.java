@@ -9,25 +9,19 @@ public class Dictionary {
 
     private HashMap<String, Token> dictionary;
     private ArrayList<File> allDocuments;
-    private int totalDocumentCount;
 
     public Dictionary(HashMap<String, Token> dictionary){
         this.dictionary = dictionary;
-        this.totalDocumentCount = 0;
-        for (Map.Entry<String, Token> entry : dictionary.entrySet()) {
-            totalDocumentCount += 1;
-        }
+
     }
 
     public Dictionary(){
         this.dictionary = new HashMap<String, Token>();
         this.allDocuments = new ArrayList<File>();
-        this.totalDocumentCount = 0;
     }
 
     public void addToDict(Token token){
         this.dictionary.put(token.get_term(), token);
-        this.totalDocumentCount += 1;
     }
 
     public void addDocument(File document){
@@ -137,10 +131,12 @@ public class Dictionary {
                     for(String document : relevantDocuments){
                         double score;
                         //ich frage ob das wort auch wirklich in diesem dokument vorkommt, wenn ja berechne ich den Score wie in den Folien beschrieben
-                        if(entry.getValue().get_posting_list().get(document) != null)
+                        if(entry.getValue().get_posting_list().get(document) != null && (Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size()) != 0))
                             //CALCULATION FOR SCORING METHOD
-                            { score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
-                        } else {
+                            { score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size());
+                        } else if ( entry.getValue().get_posting_list().get(document) != null && (Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size()) == 0)){
+                            score = Math.log(1 + entry.getValue().get_posting_list().get(document));
+                        }else {
                             score = 0;
                         }
                         //Der Score wird hochsummiert, wie in der Folie beschrieben
@@ -188,9 +184,11 @@ public class Dictionary {
                     }
                     for(String document : relevantDocuments){
                         double score;
-                        if(entry.getValue().get_posting_list().get(document) != null)
+                        if(entry.getValue().get_posting_list().get(document) != null && (Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size()) != 0)){
                         //CALCULATION FOR SCORING METHOD
-                            { score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
+                            score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size());
+                        } else if ( entry.getValue().get_posting_list().get(document) != null && (Math.log10(relevantDocuments.size() / entry.getValue().get_posting_list().size()) == 0)){
+                            score = Math.log(1 + entry.getValue().get_posting_list().get(document));
                         } else {
                             score = 0;
                         }
@@ -210,7 +208,8 @@ public class Dictionary {
 
         int i = 0;
         for (Map.Entry<String, Double> rank : sortedRanking.entrySet()) {
-            result += rank.getKey() + " " + (i+1) + " " + rank.getValue() + "\n";
+            double score = rank.getValue() >= 0 ? rank.getValue() : 0;
+            result += rank.getKey() + " " + (i+1) + " " + score + "\n";
             ++i;
             if(i == 20) break;
 
