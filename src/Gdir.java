@@ -1,72 +1,75 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Gdir {
 	
 	public static void main(String[] args) {
-		
-		int i = 0;
-		String current_arg = "";
-		
-		System.out.println("Hello, gdir");
-		
-		// args verarbeiten
-		
-		// hier werden die optionen wie case folding usw. gespeichert
-		ArrayList<String> options = new ArrayList<String>();
-		
-		if (args.length > 0)
-		{
-			//~ System.out.println("args:");
-			for(i = 0; i <= args.length - 1; i++)
-			{
-				current_arg = args[i];
-				
-				// wenn das aktuelle arg nicht mit einem "-" beginnt wird es uebersprungen
-				// wenn "-query test"
-				//~ if (false == current_arg.startsWith("-"))
-				//~ {
-					//~ System.out.print("contu");
-					//~ continue;
-				//~ }
-				
-				current_arg = current_arg.substring(1);
-				
-				System.out.println(current_arg);
-				
-				// zur zeit ist bow default. muss also nich angegeben werden
-				
-				// cf = case folding
-				// st = stemming
-				// bow = bag of words
-				// bw = bi word
-				if
-				(
-					(current_arg.equals("cf")) ||
-					(current_arg.equals("st")) ||
-					(current_arg.equals("bow")) ||
-					(current_arg.equals("bw")) 
-				)
-				{
-					options.add(current_arg);
-				}
-				else
-				{
-					System.out.println("unbekanntes arg: " + current_arg);
-					return;
-				}
-			}
-		}
-		else
-		{
-			System.out.println("keine args");
-			return;
-		}
-		
-		String path_rel = "../resources/20_newsgroups_subset/";
-		
-		Index index = new Index(path_rel, options);
+
+		System.out.println	("+--------------------------------------------------\n" 	+
+							 "| Hi! I am a simple search system.\n" 					+
+							 "+--------------------------------------------------\n" 		+
+							 "Let me check the path to your resources ... ");
+
+		//user.dir gibt relativen working directory
+		String path_rel = System.getProperty("user.dir") + "/resources/20_newsgroups_subset/";
+
+		//C:\Users\Vede\Dropbox\Dokumente\Uni\TU\sem5\Grundlagen des Information Retrieval\gdir/resources/20_newsgroups_subset/
+
+		Index index = new Index(path_rel);
+
+		if (!index.handlePath().equals("ok")) return;
+
+		System.out.print("Okay, let's proceed.\n" +
+				"Now please choose your personal options.\n" +
+				"Usage: [-cf] [-st] [-bw]\n" +
+				"Type -cf if you want to use casefolding for this session!\n" +
+				"Type -st if you want to use stemming for this session!\n" +
+				"Type -bw if you want to use bi-words for this session!\n" +
+				"Hit Enter if you don't want to use any options for this session!\n" +
+				"> ");
+
+
+		//Hier drinnen werden die Optionen -cf -bw etc. geprueft und gespeichert
+		Options persOpt = new Options();
+		persOpt.checkArguments();
+
+		System.out.println("Thank you! Now I'm going to create a dictionary out of the resources your provided!\n" +
+				"This might take a while. But worry not! I'm fast ...");
+
+		//Hier wird der Index fuer die Token erstellt
+		index.setOptions(persOpt);
 		index.init();
+
+		System.out.println("Ok, I'm done now! Let's proceed.");
+		
+		System.out.println("+--------------------------------------------------");
+		System.out.println("| Index has been created with the options: " + persOpt.getInput());
+		System.out.println("| Usage: [-f] -t|-q");
+		System.out.println("| Search in a specific folder : -f [foldername]");
+		System.out.println("| Search for topic: -t [topic]");
+		System.out.println("| Search for a query: -q [query]");
+		System.out.println("| For example: -f misc.folder -t topic1");
+		System.out.println("+--------------------------------------------------");
+		System.out.print("> ");
+		
+
+		//Hier findet die Suche statt
+		while(true){
+			Options searchOpt = new Options();
+			String[] sQueryOpt = searchOpt.checkMode();
+
+			String results = index.getDictionary().search(sQueryOpt, persOpt);
+			if (results.equals("exit")){
+				System.out.println("Bye bye!");
+				break;
+			}
+
+			System.out.print(results + "\n> ");
+		}
+
 	}
+
 }
