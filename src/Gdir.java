@@ -7,17 +7,13 @@ import java.util.Scanner;
 public class Gdir {
 	
 	public static void main(String[] args) {
-		
-		Scanner sc = new Scanner(System.in);
-
-		int i = 0;
-		String current_arg = "";
 
 		System.out.println	("+--------------------------------------------------\n" 	+
 							 "| Hi! I am a simple search system.\n" 					+
 							 "+--------------------------------------------------\n" 		+
 							 "Let me check the path to your resources ... ");
 
+		//user.dir gibt relativen working directory
 		String path_rel = System.getProperty("user.dir") + "/resources/20_newsgroups_subset/";
 
 		//C:\Users\Vede\Dropbox\Dokumente\Uni\TU\sem5\Grundlagen des Information Retrieval\gdir/resources/20_newsgroups_subset/
@@ -36,12 +32,14 @@ public class Gdir {
 				"> ");
 
 
+		//Hier drinnen werden die Optionen -cf -bw etc. geprüft und gespeichert
 		Options persOpt = new Options();
 		persOpt.checkArguments();
 
 		System.out.println("Thank you! Now I'm going to create a dictionary out of the resources your provided!\n" +
 				"This might take a while. But worry not! I'm fast ...");
 
+		//Hier wird der Index für die Token erstellt
 		index.setOptions(persOpt);
 		index.init();
 
@@ -58,6 +56,7 @@ public class Gdir {
 		System.out.print("> ");
 		
 
+		//Hier findet die Suche statt
 		while(true){
 			Options searchOpt = new Options();
 			String[] sQueryOpt = searchOpt.checkMode();
@@ -70,33 +69,6 @@ public class Gdir {
 
 			System.out.print(results + "\n> ");
 		}
-
-
-
-
-
-			/*
-            if (input.equals("exit"))
-            {
-				break;
-			}
-            
-			String[] input_array = input.split(" ", 2);
-            
-            if (input_array[0].substring(1).equals("q"))
-            {
-				//System.out.println(index.search_query(input_array[1]));
-			}
-			else if (input_array[0].substring(1).equals("t"))
-			{
-				System.out.println("Topic");
-			}
-			else
-			{
-				
-			}
-			*/
-            
 
 	}
 

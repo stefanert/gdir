@@ -34,9 +34,6 @@ public class Dictionary {
         this.allDocuments.add(document);
     }
 
-    public HashMap<String, Token> getDict(){
-        return this.dictionary;
-    }
 
     public Token getToken(String word){
         return this.dictionary.get(word);
@@ -48,14 +45,17 @@ public class Dictionary {
 
 
 
+    //Hier findet die Unterscheidung ob die Suche ein query/topic ist und in einem bestimmten Folder gesucht werden soll
     public String search(String[] query, Options options){
         String res = "";
 
+        //Wenn die Query "exit" ist, soll er gleich rausgehen
         if(query[0].equals("exit")) res = "exit";
 
         else if(!query[0].equals("-f")){
             if(query[0].equals("-q")){
 
+                //Anwenden der ausgewählten Optionen auf die Query
                 ArrayList<String> queryList = new ArrayList<String>(Arrays.asList(query));
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	queryList = options.normalize(queryList);
                 query = queryList.toArray(new String[queryList.size()]);
@@ -68,6 +68,7 @@ public class Dictionary {
                 File topic = new File(path);
                 Index methods = new Index();
 
+                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
                 ArrayList<String> useful_lines = methods.get_usefull_lines(topic);
                 ArrayList<String> all_words     = methods.get_all_words(useful_lines);
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	all_words = options.normalize(all_words);
@@ -77,6 +78,7 @@ public class Dictionary {
             }
         } else if(query[0].equals("-f")){
             if(query[2].equals("-q")){
+                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
                 ArrayList<String> queryList = new ArrayList<String>(Arrays.asList(query));
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	queryList = options.normalize(queryList);
                 query = queryList.toArray(new String[queryList.size()]);
@@ -88,6 +90,7 @@ public class Dictionary {
                 File topic = new File(path);
                 Index methods = new Index();
 
+                //Anwenden der ausgewählten Optionen auf den Topic Inhalt
                 ArrayList<String> useful_lines = methods.get_usefull_lines(topic);
                 ArrayList<String> all_words     = methods.get_all_words(useful_lines);
                 if (options.getInput().contains("-cf") || options.getInput().contains("-st"))	all_words = options.normalize(all_words);
@@ -113,20 +116,34 @@ public class Dictionary {
         HashMap<String, Double> ranking = new HashMap<String, Double>();
         HashSet<String> relevantDocuments = new HashSet<String>();
 
+        //für jeders Wort in der Query
         for(int i = 1; i < query.length; ++i){
+            //Die Dokumente der Posting List jedes Wortes das im Dictionary existiert werden dem "relevant Documents" Hashset hinzugefügt, damit nicht in jedem Dokument gesucht werden muss
+            //Für jedes weitere Wort werden dessen Dokumente hinzugefügt
+            //Hashset eliminiert Duplikate von alleine
             for (Map.Entry<String, Token> entry : dictionary.entrySet()) {
                 if(entry.getKey().equals(query[i])){
+
                     //for(Map.Entry<String, Integer> doc : entry.getValue().get_posting_list().entrySet()){
                     //    relevantDocuments.add(doc.getKey());
                     //}
+
+                    //Diese Methode macht das gleiche wie oben beschrieben bzw. ist einfach nur eine moderne Vereinfachung der for-Schleife
+                    //Wenn du sie eventuelle nicht ausführen kannst (Java 7 oder höher is glaub ich gefordert, dann kommentiers aus und verwende die for-schleife
+                    //Machen das gleiche
                     relevantDocuments.addAll(entry.getValue().get_posting_list().entrySet().stream().map(Map.Entry<String, Integer>::getKey).collect(Collectors.toList()));
 
+                    //Hier findet eben für jedes relevante Dokument jetzt die Berechnung statt
                     for(String document : relevantDocuments){
                         double score;
-                        if(entry.getValue().get_posting_list().get(document) != null){ score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
+                        //ich frage ob das wort auch wirklich in diesem dokument vorkommt, wenn ja berechne ich den Score wie in den Folien beschrieben
+                        if(entry.getValue().get_posting_list().get(document) != null)
+                            //CALCULATION FOR SCORING METHOD
+                            { score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
                         } else {
                             score = 0;
                         }
+                        //Der Score wird hochsummiert, wie in der Folie beschrieben
                         if(ranking.containsKey(document)){
                             ranking.put(document, ranking.get(document)+ score);
                         } else {
@@ -137,6 +154,8 @@ public class Dictionary {
             }
         }
 
+
+        // All dies hier dient zur Auswahl der TOP 20
         ValueComparator bvc =  new ValueComparator(ranking);
         TreeMap<String,Double> sortedRanking = new TreeMap<String,Double>(bvc);
         sortedRanking.putAll(ranking);
@@ -153,6 +172,7 @@ public class Dictionary {
     }
 
 
+    //Siehe Beschreibung oben, ziemlich das Gleiche, nur dass die relevanten Dokumente nur die jenigen sind die in query[1] spezifiziert sind und dies ist genau der foldername
     private String search_query_in_folder(String[] query)
     {
         String result = "";
@@ -166,10 +186,11 @@ public class Dictionary {
                     for(Map.Entry<String, Integer> doc : entry.getValue().get_posting_list().entrySet()){
                        if(doc.getKey().contains(query[1]))  relevantDocuments.add(doc.getKey());
                     }
-                    //relevantDocuments.addAll(entry.getValue().get_posting_list().entrySet().stream().map(Map.Entry<String, Integer>::getKey).collect(Collectors.toList()));
                     for(String document : relevantDocuments){
                         double score;
-                        if(entry.getValue().get_posting_list().get(document) != null){ score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
+                        if(entry.getValue().get_posting_list().get(document) != null)
+                        //CALCULATION FOR SCORING METHOD
+                            { score = Math.log(1 + entry.getValue().get_posting_list().get(document))*Math.log10(totalDocumentCount / entry.getValue().get_posting_list().size());
                         } else {
                             score = 0;
                         }
@@ -200,6 +221,7 @@ public class Dictionary {
     }
 
 
+    //innere Klasse, die notwendig ist für die TOP 20 Berechnung
     class ValueComparator implements Comparator<String> {
 
         Map<String, Double> base;
