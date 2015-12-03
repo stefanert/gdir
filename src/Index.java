@@ -7,82 +7,133 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Index {
 	
 	private String path;
+	private Options option;
 	private ArrayList<String> options;
-	private HashMap<String, Token> tokens;
-	
-	public Index(String path, ArrayList<String> options)
+	private Dictionary dictionary;
+
+	public Index(){
+	}
+
+	public Index(String path)
 	{
-		tokens = new HashMap<String, Token>();
+
+		this.path = path;
+		this.options = new ArrayList<String>();
+		this.dictionary = new Dictionary();
+	}
+	
+	public Index(String path, Options options)
+	{
 		
 		this.path = path;
-		this.options = options;
+		this.options = new ArrayList<String>();
+		this.setOptions(options);
+		this.dictionary = new Dictionary();
 	}
-	
-	public void init()
-	{
-		// ordner und unterordner holen
-		File directory_base = new File(this.path);
-        File[] subdirectories = directory_base.listFiles();
-        
-        // arraylist wo alle datein gespeichert werden
-        ArrayList<File> all_files = new ArrayList<File>();
-        
-        File[] current_dir_files;
-        for (int i = 0; i < subdirectories.length; ++i)
-		{
-			// datein des aktuellen ordners
-			current_dir_files = subdirectories[i].listFiles();
-			
-			// datein des aktuellen ordners durchwandern
-			for (int j = 0; j < current_dir_files.length; ++j)
-			{
-				all_files.add(current_dir_files[j]);
+
+	public Dictionary getDictionary(){
+		return this.dictionary;
+	}
+
+
+	public boolean pathIsValid(){
+		File check = new File(this.path);
+		return check.listFiles() != null;
+	}
+
+	public void setPath(String path){
+		this.path = path;
+	}
+
+	public void setOptions(Options options){
+
+		option = options;
+
+		String[] persOpt = options.getOptions();
+		if(persOpt != null) {
+			for (int i = 0; i < persOpt.length; ++i) {
+				this.options.add(persOpt[i]);
 			}
 		}
-		
-		//~ for (int i = 0; i < all_files.size(); ++i)
-		for (int i = 0; i < 20; ++i)
-		{
-			index_file(all_files.get(i));
+	}
+
+	public String handlePath(){
+		if(!this.pathIsValid()) {
+			Scanner sc = new Scanner(System.in);
+			System.out.print("It appears as if your path is either wrong or the folders empty. Are you sure you want to proceed?\n\n" +
+					"Type yes to continue!\n" +
+					"Type exit to exit the program!\n" +
+					"Type path to enter a new path!\n" +
+					"> ");
+			String howToProceed = sc.nextLine();
+			if (howToProceed.equals("exit")) {
+				System.out.println("Bye bye!");
+				return "exit";
+			} else if (howToProceed.equals("path")) {
+				System.out.print("Enter your new path now: ...\n" +
+						"> ");
+				this.setPath(sc.nextLine());
+				this.handlePath();
+			} else if (howToProceed.equals("yes")){
+				return "ok";
+			} else {
+				System.out.println("I don't know this command :( \n\n");
+				this.handlePath();
+			}
 		}
-		
-		//~ System.out.println("========================================");
-		//~ 
-		//~ int i = 0;
-		//~ for (Token value : tokens.values())
-		//~ {
-			//~ i++;
-			//~ value.print();
-		//~ }
-		//~ 
-		//~ System.out.println(i);
-		//~ 
-		//~ System.out.println("========================================");
+		return "ok";
+	}
+
+
+	public void init()	{
+
+		HashMap<File, String> allDocuments = new HashMap<File, String>();
+
+		//Get all Documents in the Resource Folder
+        File[] subDirectories = new File(this.path).listFiles();
+        
+        File[] documentsInDirectory = new File[0];
+        for (int i = 0; i < subDirectories.length; ++i){
+			documentsInDirectory = subDirectories[i].listFiles();
+			for (int j = 0; j < documentsInDirectory.length; ++j){
+				String parent = documentsInDirectory[j].getParent();
+				parent = parent.substring(parent.lastIndexOf("\\") + 1, parent.length());
+				allDocuments.put(documentsInDirectory[j], parent);
+				this.dictionary.addDocument(documentsInDirectory[j]);
+			}
+		}
+
+		//Index all words in those documents
+		for (Map.Entry<File, String> entry : allDocuments.entrySet()) {
+			index_file(entry.getKey(), entry.getValue());
+		}
+
 	}
 	
 	
-	public void index_file(File file)
+	public void index_file(File file, String folder)
 	{
-		int doc_id = Integer.parseInt(file.getName());
-		
-		//~ System.out.println("file name: " + file.getName() );
+		String doc_id = folder + "\\" +Integer.parseInt(file.getName());
 		
 		ArrayList<String> usefull_lines = get_usefull_lines(file);      // wir holen aus der datei alle brauchbaren zeilen.
 		ArrayList<String> all_words     = get_all_words(usefull_lines); // die zeilen werden bei " " getrennt um die woerter zu bekommen
-		ArrayList<String> all_words_n   = normalize_words(all_words);   // normalize words. die optionen aus dem cli werden hier verwendet.
+
+		// normalize words. die optionen aus dem cli werden hier verwendet.
+		if(this.options.contains("-cf") || this.options.contains("-st"))	all_words = this.option.normalize(all_words);
 		
 		// wenn es bi word ist, dann wird das letzte wort nicht mehr eingelesen
 		// (das letzte wort ist das zweite beim vorletzten)
-		int bi_word_mod = 0;
-		if (this.options.contains("bw")) { bi_word_mod = 1; }
+		int bi_word_mod = this.options.contains("bw") ? 1 : 0;
 		
 		String current_term = "";
-		
-		for (int i = 0; i < all_words_n.size()-bi_word_mod; ++i)
+
+		for (int i = 0; i < all_words.size()-bi_word_mod; ++i)
 		{
 			// 1. es wird ein token angelegt
 			// 2. es wird ueberprueft ob der token in den tokens enthalten ist.
@@ -92,36 +143,28 @@ public class Index {
 			// ob die id schon in der posting list ist wird in der add_id funktion
 			// ueberprueft
 			
-			current_term = all_words_n.get(i);
+			current_term = all_words.get(i);
 			
 			// das naechste wort wird auch genommen
-			if (this.options.contains("bw")) { current_term += "," + all_words_n.get(i+1); }
+			if (bi_word_mod == 1) { current_term += " " + all_words.get(i+1); }
 			
 			Token temp = new Token(current_term);
 			
-			if ( ! tokens.containsKey(current_term))
-			{
-				temp.add_id(doc_id);
-				tokens.put(current_term, temp);
-			}
-			else
-			{
-				tokens.get(current_term).add_id(doc_id);
-			}
+			if ( ! dictionary.contains(temp)) {
+				temp.addToPostinglist(doc_id);
+				dictionary.addToDict(temp);
+			} else dictionary.getToken(current_term).addToPostinglist(doc_id);
 		}
 	}
 	
 	// es wird alles aufgenommen ausser: header und leere zeilen
-	// TODO: ueberlegen, ob hier alle zeielen geloescht werden ,die mit
-	// ">" beginnen. also wo noch der text steht auf den geantwortet wird.
-	
 	public ArrayList<String> get_usefull_lines(File file)
 	{
 		ArrayList<String> usefull_lines = new ArrayList<String>();
 		
-		InputStream is = null; 
-		InputStreamReader isr = null;
-		BufferedReader br = null;
+		InputStream is;
+		InputStreamReader isr;
+		BufferedReader br;
 		
 		try
 		{
@@ -134,37 +177,21 @@ public class Index {
 			for (String line = br.readLine(); line != null; line = br.readLine())
 			{
 				// wenn ich noch dabei bin den header zu lesen
-				if (still_reading_header == true)
-				{
+				if (still_reading_header == true){
 					// wenn in der zeile ein ": " vorkommt ist es
 					// teil des headers und wird ignoriert
-					if (line.contains(": "))
-					{
-						continue;
-					}
+					if (line.contains(": "))	continue;
 					// es wird davon ausgegangen, dass der header zu ende ist
-					else
-					{
-						still_reading_header = false;
-					}
+					else	still_reading_header = false;
 				}
-				
-				// die ueberpruefung kann eigentlich weggelassen werden
-				if (still_reading_header == false)
-				{
-					// leere zeielen werden uebersprungen
-					if (line.equals("") == false)
-					{
-						usefull_lines.add(remove_garbage(line));
-					}
-				}
+				// leere zeielen werden uebersprungen
+				if (line.equals("") == false)	usefull_lines.add(remove_garbage(line));
 			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		
 		return usefull_lines;
 	}
 	
@@ -219,75 +246,21 @@ public class Index {
 	}
 	
 	// aus den zeilen einer datei werden die einzelnen woerter geholt
-	
 	public ArrayList<String> get_all_words(ArrayList<String> lines)
 	{
 		ArrayList<String> all_words = new ArrayList<String>();
 		String[] line_words;
 		
-		for (int i = 0; i < lines.size(); ++i)
-		{
+		for (int i = 0; i < lines.size(); ++i){
 			line_words = lines.get(i).split(" ");
 			
-			for (int j = 0; j < line_words.length; ++j)
-			{
+			for (int j = 0; j < line_words.length; ++j){
 				// leere woerter werden nicht aufgenommen
-				if (line_words[j].equals("") == false)
-				{
-					all_words.add(line_words[j].trim());
-				}
+				if (line_words[j].equals("") == false)	all_words.add(line_words[j].trim());
 			}
 		}
 		
 		return all_words;
-	}
-	
-	public ArrayList<String> normalize_words(ArrayList<String> words)
-	{
-		ArrayList<String> normalized_words = new ArrayList<String>();
-		Stemmer st = new Stemmer();
-		
-		for (int i = 0; i < words.size(); ++i)
-		{
-			String normalized_word = words.get(i);
-			
-			if (this.options.contains("cf")) // case folding
-			{
-				normalized_word = normalized_word.toLowerCase();
-			}
-			
-			if (this.options.contains("st")) // stemming
-			{
-				st.add(normalized_word.toCharArray(), normalized_word.length());
-				st.stem();
-				normalized_word = st.toString();
-			}
-			
-			normalized_words.add(normalized_word);
-		}
-		
-		return normalized_words;
-	}
-	
-	public String search_query(String query)
-	{
-		String result = "";
-		
-		Token t = tokens.get(query);
-		
-		if (t == null)
-		{
-			result = "asf";
-		}
-		
-		//~ System.out.println(doc_ids);
-		//~ 
-		//~ for (int i = 0; i < doc_ids.size(); ++i)
-		//~ {
-			//~ result += doc_ids.get-(i) + ", ";
-		//~ }
-		
-		return result;
 	}
 	
 }

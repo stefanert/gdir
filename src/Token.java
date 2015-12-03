@@ -1,36 +1,39 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Token {
 	
 	private String term;
-	private ArrayList<Integer> posting_list;
+	private HashMap<String, Integer> posting_list;
 	
 	public Token(String term)
 	{
 		this.term = term;
-		this.posting_list = new ArrayList<Integer>();
+		this.posting_list = new HashMap<String, Integer>();
 	}
 	
-	// ob die id schon in der posting list ist.
+	/* ob die id schon in der posting list ist.
 	public boolean has_id(int id)
 	{
 		return this.posting_list.contains(id);
 	}
+	*/
 	
-	public void add_id(int id)
-	{
-		// die id wird nur hinzugefuegt, wenn sie ncoh nicht enthalten ist
-		if (this.posting_list.contains(id) == false)
-		{
-			this.posting_list.add(id);
+	public void addToPostinglist(String id){
+		// die id wird hinzugefuegt, wenn sie noch nicht enthalten ist, ansonsten die häufigkeit erhöht
+		if (!this.posting_list.containsKey(id)){
+			this.posting_list.put(id, 1);
+		} else {
+			this.posting_list.put(id, posting_list.get(id) + 1);
 		}
 	}
 	
-	public ArrayList<Integer> get_posting_list()
+	public HashMap<String, Integer> get_posting_list()
 	{
 		return this.posting_list;
 	}
+
 	
 	public String get_term()
 	{
